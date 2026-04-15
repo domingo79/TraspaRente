@@ -6,11 +6,12 @@
 
 ---
 
-## 🚀 Provalo subito
 
-**👉 [trasparente.streamlit.app](https://trasparente.streamlit.app/)**
+## 🌐 Provalo subito
 
-Nessuna installazione richiesta — apri il link e inizia subito.
+Nessuna installazione richiesta — apri il link e inizia subito. 👉 **https://trasparente.streamlit.app/**
+> 💡 *Suggerimento: usa **Ctrl+Click** (o **Cmd+Click** su Mac) per aprire in una nuova scheda.*
+
 
 ---
 
