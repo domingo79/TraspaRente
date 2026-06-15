@@ -1,5 +1,5 @@
 import streamlit as st
-from PIL import Image
+from PIL import Image, ImageFilter
 import numpy as np
 from io import BytesIO
 
@@ -25,10 +25,22 @@ def rimuovi_sfondo(img: Image.Image, soglia: int) -> Image.Image:
         soglia: valore 0-255, più è alto più sfondo viene rimosso
     """
     img = img.convert("RGBA")
-    dati = np.array(img)
+    rgb = img.convert("RGB")
 
-    # Crea una maschera per i pixel da rendere trasparenti
-    r, g, b, a = dati[:, :, 0], dati[:, :, 1], dati[:, :, 2], dati[:, :, 3]
+    # Le foto hanno spesso ombre o luce non uniforme sul foglio: stimando lo
+    # sfondo con una sfocatura ampia e dividendo l'immagine per questa stima
+    # si "appiattisce" l'illuminazione, riportando il foglio a bianco uniforme
+    # prima di applicare la soglia.
+    raggio = max(15, min(rgb.size) // 10)
+    sfondo_stimato = rgb.filter(ImageFilter.GaussianBlur(radius=raggio))
+
+    originale = np.asarray(rgb, dtype=np.float32)
+    sfondo = np.asarray(sfondo_stimato, dtype=np.float32)
+    normalizzato = np.clip(originale / np.maximum(sfondo, 1) * 255, 0, 255)
+
+    dati = np.array(img)
+    r, g, b = normalizzato[:, :, 0], normalizzato[:,
+                                                  :, 1], normalizzato[:, :, 2]
     maschera_sfondo = (r > soglia) & (g > soglia) & (b > soglia)
     dati[maschera_sfondo, 3] = 0  # Imposta alpha a 0 per i pixel di sfondo
 
